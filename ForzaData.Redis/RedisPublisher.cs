@@ -8,6 +8,8 @@ public class RedisPublisher(
 	ILogger<RedisPublisher> logger,
 	IDatabase db) : ForzaDataObserver
 {
+	private const float StandardGravity = 9.80665f; // m/s²
+	
 	public override void OnCompleted()
 	{
 		logger.LogInformation("Data transmission completed");
@@ -25,17 +27,25 @@ public class RedisPublisher(
 
 	public override void OnNext(ForzaDataStruct value)
 	{
+		var sd = value.Sled;
+		ForzaCarDashDataStruct cdd = value.CarDash ?? default;
+		if (sd.IsRaceOn == 0)
+		{
+			logger.LogInformation("Race is off...");
+			return;
+		}
+		
 		var record = new
 		{
-			engineRpm = (int)value.Sled.CurrentEngineRpm,
-			truckModel = value.Sled.CarOrdinal,
-			speed = (int)value.Sled.VelocityX,
+			engineRpm = (int)sd.CurrentEngineRpm,
+			truckModel = sd.CarOrdinal,
+			speed = (int)cdd.Speed * 3.6f,
 			brakeTemperature = (int)GetWheelTemperature(value),
-			userThrottle = (int)value.Sled.AccelerationX,
-			userBrake = value.CarDash?.Brake ?? 0,
-			userSteer = value.CarDash?.Steer ?? 0,
+			userThrottle = (int)(cdd.Accel / 2.55f),
+			userBrake = (int)(cdd.Brake / 2.55f),
+			userSteer = (int)(cdd.Steer / 1.27f),
 			trailerMass = 0,
-			truckOdometer = (int)(value.CarDash?.DistanceTraveled ?? 0)
+			truckOdometer = (int)cdd.DistanceTraveled / 1000f
 		};
 		
 		logger.LogInformation(
@@ -59,15 +69,15 @@ public class RedisPublisher(
 			record.trailerMass,
 			record.truckOdometer);
 		
-		db.StringSet("engineRpm", ((int)value.Sled.CurrentEngineRpm).ToString());
-		db.StringSet("truckModel", value.Sled.CarOrdinal.ToString());
-		db.StringSet("speed", ((int)value.Sled.VelocityX).ToString());
-		db.StringSet("brakeTemperature", ((int)GetWheelTemperature(value)).ToString());
-		db.StringSet("userThrottle", ((int)value.Sled.AccelerationX).ToString());
-		db.StringSet("userBrake", (value.CarDash?.Brake ?? 0).ToString());
-		db.StringSet("userSteer", (value.CarDash?.Steer ?? 0).ToString());
-		db.StringSet("trailerMass", "0");
-		db.StringSet("truckOdometer", ((int)(value.CarDash?.DistanceTraveled ?? 0)).ToString());
+		db.StringSet("engineRpm", record.engineRpm.ToString());
+		db.StringSet("truckModel", record.truckModel.ToString());
+		db.StringSet("speed", record.speed.ToString());
+		db.StringSet("brakeTemperature", record.brakeTemperature.ToString());
+		db.StringSet("userThrottle", record.userThrottle.ToString());
+		db.StringSet("userBrake", record.userBrake.ToString());
+		db.StringSet("userSteer", record.userSteer.ToString());
+		db.StringSet("trailerMass", record.trailerMass.ToString());
+		db.StringSet("truckOdometer", record.truckOdometer.ToString());
 	}
 
 	private static float GetWheelTemperature(ForzaDataStruct value)
