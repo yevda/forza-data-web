@@ -10,7 +10,7 @@ public class RedisPublisher(
 {
 	// private const float StandardGravity = 9.80665f; // m/s²
 	private float _distance;
-	private DateTimeOffset _prevTime = DateTimeOffset.UtcNow;
+	private uint _prevTime = 0;
 	
 	public override void OnCompleted()
 	{
@@ -37,11 +37,16 @@ public class RedisPublisher(
 			logger.LogInformation("Race is off...");
 			return;
 		}
+
+		if (_prevTime == 0)
+		{
+			_prevTime = sd.TimestampMS;
+		}
 		
-		var curTime = DateTimeOffset.UtcNow;
+		var curTime = sd.TimestampMS;
 		if (_prevTime != curTime)
 		{
-			_distance += (int)(cdd.Speed * (curTime - _prevTime).TotalMilliseconds / 1000f) / 1000f;
+			_distance += (int)(cdd.Speed * (curTime - _prevTime) / 1000f) / 1000f;
 			_prevTime = curTime;
 		}
 		
