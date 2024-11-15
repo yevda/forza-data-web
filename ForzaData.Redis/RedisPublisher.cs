@@ -54,8 +54,8 @@ public class RedisPublisher(
 			userThrottle = (int)(cdd.Accel / 2.55f),
 			userBrake = (int)(cdd.Brake / 2.55f),
 			userSteer = (int)(cdd.Steer / 1.27f),
-			trailerMass = 0,
-			truckOdometer = (int)_distance
+			trailerMass = 1750,
+			truckOdometer = _distance.ToString("000000.00")
 		};
 		
 		logger.LogInformation(
