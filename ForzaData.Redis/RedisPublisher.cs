@@ -9,8 +9,8 @@ public class RedisPublisher(
 	IDatabase db) : ForzaDataObserver
 {
 	// private const float StandardGravity = 9.80665f; // m/s²
-	private float _distance;
-	private uint _prevTime = 0;
+	private decimal _distance;
+	private uint _prevTime;
 	
 	public override void OnCompleted()
 	{
@@ -46,7 +46,7 @@ public class RedisPublisher(
 		var curTime = sd.TimestampMS;
 		if (_prevTime != curTime)
 		{
-			_distance += (int)(cdd.Speed * (curTime - _prevTime) / 1000f) / 1000f;
+			_distance += (decimal)cdd.Speed * (curTime - _prevTime) / 1000M / 1000M;
 			_prevTime = curTime;
 		}
 		
@@ -60,7 +60,7 @@ public class RedisPublisher(
 			userBrake = (int)(cdd.Brake / 2.55f),
 			userSteer = (int)(cdd.Steer / 1.27f),
 			trailerMass = 1750,
-			truckOdometer = _distance.ToString("000000.00")
+			truckOdometer = _distance.ToString("F1")
 		};
 		
 		logger.LogInformation(
@@ -92,7 +92,7 @@ public class RedisPublisher(
 		db.StringSet("userBrake", record.userBrake.ToString());
 		db.StringSet("userSteer", record.userSteer.ToString());
 		db.StringSet("trailerMass", record.trailerMass.ToString());
-		db.StringSet("truckOdometer", record.truckOdometer.ToString());
+		db.StringSet("truckOdometer", record.truckOdometer);
 	}
 
 	private static float GetWheelTemperature(ForzaDataStruct value)
