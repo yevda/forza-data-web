@@ -9,10 +9,13 @@ public class RedisPublisher(
 	IDatabase db) : ForzaDataObserver
 {
 	private const float StandardGravity = 9.80665f; // m/s²
+	private float _distance = 0;
+	private uint _prevTime = 0;
 	
 	public override void OnCompleted()
 	{
 		logger.LogInformation("Data transmission completed");
+		_distance = 0;
 	}
 
 	public override void OnError(Exception error)
@@ -35,6 +38,17 @@ public class RedisPublisher(
 			return;
 		}
 		
+		if (_prevTime == 0)
+		{
+			_prevTime = sd.TimestampMS;
+		}
+		
+		if (_prevTime != sd.TimestampMS)
+		{
+			_distance += (int)(cdd.Speed * (sd.TimestampMS - _prevTime) * 1000f) / 1000f;
+			_prevTime = sd.TimestampMS;
+		}
+		
 		var record = new
 		{
 			engineRpm = (int)sd.CurrentEngineRpm,
@@ -45,7 +59,7 @@ public class RedisPublisher(
 			userBrake = (int)(cdd.Brake / 2.55f),
 			userSteer = (int)(cdd.Steer / 1.27f),
 			trailerMass = 0,
-			truckOdometer = (int)(cdd.DistanceTraveled / 1000f)
+			truckOdometer = (int)_distance
 		};
 		
 		logger.LogInformation(
