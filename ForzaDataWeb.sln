@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForzaData.SampleRecorder", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForzaData.SampleFix", "SampleFix\ForzaData.SampleFix.csproj", "{83007329-2B0F-4BDC-BDA4-909AFA351BCD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForzaData.Redis", "ForzaData.Redis\ForzaData.Redis.csproj", "{7D8528F5-3574-4597-B734-87F1743F17A8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{83007329-2B0F-4BDC-BDA4-909AFA351BCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83007329-2B0F-4BDC-BDA4-909AFA351BCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83007329-2B0F-4BDC-BDA4-909AFA351BCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D8528F5-3574-4597-B734-87F1743F17A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D8528F5-3574-4597-B734-87F1743F17A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D8528F5-3574-4597-B734-87F1743F17A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D8528F5-3574-4597-B734-87F1743F17A8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
