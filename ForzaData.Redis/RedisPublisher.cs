@@ -39,13 +39,13 @@ public class RedisPublisher(
 		{
 			engineRpm = (int)sd.CurrentEngineRpm,
 			truckModel = sd.CarOrdinal,
-			speed = (int)cdd.Speed * 3.6f,
+			speed = (int)(cdd.Speed * 3.6f),
 			brakeTemperature = (int)GetWheelTemperature(value),
 			userThrottle = (int)(cdd.Accel / 2.55f),
 			userBrake = (int)(cdd.Brake / 2.55f),
 			userSteer = (int)(cdd.Steer / 1.27f),
 			trailerMass = 0,
-			truckOdometer = (int)cdd.DistanceTraveled / 1000f
+			truckOdometer = (int)(cdd.DistanceTraveled / 1000f)
 		};
 		
 		logger.LogInformation(
