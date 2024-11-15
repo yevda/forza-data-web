@@ -8,9 +8,9 @@ public class RedisPublisher(
 	ILogger<RedisPublisher> logger,
 	IDatabase db) : ForzaDataObserver
 {
-	private const float StandardGravity = 9.80665f; // m/s²
-	private float _distance = 0;
-	private uint _prevTime = 0;
+	// private const float StandardGravity = 9.80665f; // m/s²
+	private float _distance;
+	private DateTimeOffset _prevTime = DateTimeOffset.UtcNow;
 	
 	public override void OnCompleted()
 	{
@@ -38,15 +38,11 @@ public class RedisPublisher(
 			return;
 		}
 		
-		if (_prevTime == 0)
+		var curTime = DateTimeOffset.UtcNow;
+		if (_prevTime != curTime)
 		{
-			_prevTime = sd.TimestampMS;
-		}
-		
-		if (_prevTime != sd.TimestampMS)
-		{
-			_distance += (int)(cdd.Speed * (sd.TimestampMS - _prevTime) * 1000f) / 1000f;
-			_prevTime = sd.TimestampMS;
+			_distance += (int)(cdd.Speed * (curTime - _prevTime).TotalMilliseconds * 1000f) / 1000f;
+			_prevTime = curTime;
 		}
 		
 		var record = new
