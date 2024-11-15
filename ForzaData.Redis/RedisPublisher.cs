@@ -41,7 +41,7 @@ public class RedisPublisher(
 		var curTime = DateTimeOffset.UtcNow;
 		if (_prevTime != curTime)
 		{
-			_distance += (int)(cdd.Speed * (curTime - _prevTime).TotalMilliseconds * 1000f) / 1000f;
+			_distance += (int)(cdd.Speed * (curTime - _prevTime).TotalMilliseconds / 1000f) / 1000f;
 			_prevTime = curTime;
 		}
 		
