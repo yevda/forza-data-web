@@ -56,11 +56,11 @@ public class RedisPublisher(
 			truckModel = sd.CarOrdinal,
 			speed = (int)(cdd.Speed * 3.6f),
 			brakeTemperature = (int)GetWheelTemperature(value),
-			userThrottle = (int)(cdd.Accel / 2.55f),
-			userBrake = (int)(cdd.Brake / 2.55f),
-			userSteer = (int)(cdd.Steer / 1.27f),
+			userThrottle = cdd.Accel / 2.55f / 100f,
+			userBrake = cdd.Brake / 2.55f / 100f,
+			userSteer = cdd.Steer / 1.27f / 100f,
 			trailerMass = 1750,
-			truckOdometer = _distance.ToString("F1")
+			truckOdometer = _distance
 		};
 		
 		logger.LogInformation(
@@ -88,11 +88,11 @@ public class RedisPublisher(
 		db.StringSet("truckModel", record.truckModel.ToString());
 		db.StringSet("speed", record.speed.ToString());
 		db.StringSet("brakeTemperature", record.brakeTemperature.ToString());
-		db.StringSet("userThrottle", record.userThrottle.ToString());
-		db.StringSet("userBrake", record.userBrake.ToString());
-		db.StringSet("userSteer", record.userSteer.ToString());
+		db.StringSet("userThrottle", record.userThrottle.ToString("F1"));
+		db.StringSet("userBrake", record.userBrake.ToString("F1"));
+		db.StringSet("userSteer", record.userSteer.ToString("F1"));
 		db.StringSet("trailerMass", record.trailerMass.ToString());
-		db.StringSet("truckOdometer", record.truckOdometer);
+		db.StringSet("truckOdometer", record.truckOdometer.ToString("F1"));
 	}
 
 	private static float GetWheelTemperature(ForzaDataStruct value)
